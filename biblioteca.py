@@ -1,9 +1,44 @@
+import csv
+class Libro:
+    def __init__(self, titolo, autore, anno, pagine, sezione):
+        self.titolo=titolo.strip()
+        self.autore=autore.strip()
+        self.anno=int(anno)
+        self.pagine=int(pagine)
+        self.sezione=int(sezione)
+ """fare una lista di liste"""
+
 def carica_da_file(file_path):
+    biblioteca = []
+    try:
+        with open(file_path, "r") as file:
+            prima_riga=file.readline()
+            for line in file:
+                dati_per_libro=line.strip().split(",")
+                biblioteca.append(dati_per_libro)
+    except OSError:
+        return None
+
+    return biblioteca
     """Carica i libri dal file"""
+    """cioè io ogni riga del file la intendo come un libro e la aggiungo alla lista"""
+
     # TODO
 
 
 def aggiungi_libro(biblioteca, titolo, autore, anno, pagine, sezione, file_path):
+    """Aggiunge un libro alla biblioteca e aggiorna il file CSV"""
+    libro = [titolo, autore, str(anno), str(pagine), sezione]
+    biblioteca.append(libro)
+    try:
+        with open(file_path, 'w', newline='', encoding='utf-8') as file:
+            writer = csv.writer(file)
+            writer.writerow(["Titolo", "Autore", "Anno", "Pagine", "Sezione"])  # intestazione
+            writer.writerows(biblioteca)
+    except OSError:
+        print("Errore nel salvataggio del file.")
+        return None
+    return libro
     """Aggiunge un libro nella biblioteca"""
     # TODO
 
@@ -11,12 +46,18 @@ def aggiungi_libro(biblioteca, titolo, autore, anno, pagine, sezione, file_path)
 def cerca_libro(biblioteca, titolo):
     """Cerca un libro nella biblioteca dato il titolo"""
     # TODO
+    titolo = titolo.strip().lower()
+    for libro in biblioteca:
+        if libro.titolo.lower() == titolo:
+            return libro
+    return None
 
 
 def elenco_libri_sezione_per_titolo(biblioteca, sezione):
     """Ordina i titoli di una data sezione della biblioteca in ordine alfabetico"""
     # TODO
-
+    libri_sezione = [libro.titolo for libro in biblioteca if libro.sezione == sezione]
+    return sorted(libri_sezione)
 
 def main():
     biblioteca = []

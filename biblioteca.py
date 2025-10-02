@@ -1,25 +1,36 @@
 import csv
-    """class Libro:
-        def __init__(self, titolo, autore, anno, pagine, sezione):
-            self.titolo=titolo.strip()
-            self.autore=autore.strip()
-            self.anno=int(anno)
-            self.pagine=int(pagine)
-            self.sezione=int(sezione)"""
-        """fare una lista di liste"""
 
 def carica_da_file(file_path):
     biblioteca = []
     try:
-        with open(file_path, "r") as file:
-            prima_riga=file.readline()
-            for line in file:
-                dati_per_libro=line.strip().split(",")
-                biblioteca.append(dati_per_libro)
-    except OSError:
+        with open(file_path, 'r', encoding='utf-8') as file:
+            next(file)  # salto intestazione
+            for riga in file:
+                riga = riga.strip()
+                if not riga:
+                    continue
+                parti = riga.split(',')
+                if len(parti) < 5:
+                    continue
+
+                titolo = parti[0].strip()
+                autore = parti[1].strip()
+                try:
+                    anno = int(parti[2].strip())
+                    pagine = int(parti[3].strip())
+                    sezione = int(parti[4].strip())
+                except ValueError:
+                    continue
+
+                libro = [titolo, autore, anno, pagine, sezione]
+                biblioteca.append(libro)
+        return biblioteca
+    except FileNotFoundError:
+        print("File non trovato.")
         return None
 
-    return biblioteca
+
+
     """Carica i libri dal file"""
     """cioè io ogni riga del file la intendo come un libro e la aggiungo alla lista"""
 
@@ -27,18 +38,20 @@ def carica_da_file(file_path):
 
 
 def aggiungi_libro(biblioteca, titolo, autore, anno, pagine, sezione, file_path):
-    """Aggiunge un libro alla biblioteca e aggiorna il file CSV"""
-    libro = [titolo, autore, str(anno), str(pagine), sezione]
+    libro = [titolo, autore, anno, pagine, sezione]
     biblioteca.append(libro)
+
     try:
         with open(file_path, 'w', newline='', encoding='utf-8') as file:
             writer = csv.writer(file)
             writer.writerow(["Titolo", "Autore", "Anno", "Pagine", "Sezione"])  # intestazione
-            writer.writerows(biblioteca)
+            for libro in biblioteca:
+                writer.writerow(libro)
     except OSError:
         print("Errore nel salvataggio del file.")
         return None
     return libro
+
     """Aggiunge un libro nella biblioteca"""
     # TODO
 
@@ -48,7 +61,7 @@ def cerca_libro(biblioteca, titolo):
     # TODO
     titolo = titolo.strip().lower()
     for libro in biblioteca:
-        if libro.titolo.lower() == titolo:
+        if libro[0].lower() == titolo:
             return libro
     return None
 
@@ -56,8 +69,13 @@ def cerca_libro(biblioteca, titolo):
 def elenco_libri_sezione_per_titolo(biblioteca, sezione):
     """Ordina i titoli di una data sezione della biblioteca in ordine alfabetico"""
     # TODO
-    libri_sezione = [libro.titolo for libro in biblioteca if libro.sezione == sezione]
-    return sorted(libri_sezione)
+    libri_sezione = []
+    for libro in biblioteca:
+        if libro[4] == sezione:
+            libri_sezione.append(libro[0])
+    libri_sezione.sort()
+    return libri_sezione
+
 
 def main():
     biblioteca = []

@@ -1,12 +1,12 @@
 import csv
-class Libro:
-    def __init__(self, titolo, autore, anno, pagine, sezione):
-        self.titolo=titolo.strip()
-        self.autore=autore.strip()
-        self.anno=int(anno)
-        self.pagine=int(pagine)
-        self.sezione=int(sezione)
- """fare una lista di liste"""
+    """class Libro:
+        def __init__(self, titolo, autore, anno, pagine, sezione):
+            self.titolo=titolo.strip()
+            self.autore=autore.strip()
+            self.anno=int(anno)
+            self.pagine=int(pagine)
+            self.sezione=int(sezione)"""
+        """fare una lista di liste"""
 
 def carica_da_file(file_path):
     biblioteca = []
